@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18 # Standard runtime for packaging
+  pre_build:
+    commands:
+      - echo Starting build process...
+  build:
+    commands:
+      - echo Code packaging complete.
+artifacts:
+  files:
+    - '**/*'
