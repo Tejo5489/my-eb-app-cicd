@@ -1,10 +1,198 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>CI/CD Deployed App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator App</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f4f8;
+            scroll-behavior: smooth;
+        }
+        .calculator-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        .calculator-body-gradient {
+            background: radial-gradient(circle at top left, #4f46e5 0%, #3730a3 100%);
+            padding: 2px;
+            border-radius: 1rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+    </style>
 </head>
-<body>
-    <h1>Deployment Target: INITIAL CHECKPOINT</h1>
-    <p>This message proves the pipeline works! Ready for automated updates.</p>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <main class="w-full max-w-sm md:max-w-md lg:max-w-lg calculator-body-gradient transform hover:scale-[1.02] transition-transform duration-300">
+        <div class="bg-white rounded-xl p-6"> 
+
+            <h2 class="text-2xl font-bold text-center text-gray-800 mb-4 border-b pb-2">
+                Calculator
+            </h2>
+
+            
+            <div class="bg-gray-900 text-white rounded-lg p-4 mb-4 shadow-inner border border-gray-700">
+                <div id="previous-operand" class="text-gray-400 text-sm h-4"></div>
+                <div id="current-operand" class="text-3xl font-light text-right break-words min-h-[36px]">0</div>
+            </div>
+
+            
+            <div class="calculator-grid">
+                <button class="col-span-2 bg-red-500 text-white hover:bg-red-600 active:bg-red-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-all-clear>AC</button>
+                <button class="bg-gray-400 text-gray-800 hover:bg-gray-500 active:bg-gray-600 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-delete>DEL</button>
+                <button class="bg-indigo-500 text-white hover:bg-indigo-600 active:bg-indigo-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-operation>÷</button>
+                
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>1</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>2</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>3</button>
+                <button class="bg-indigo-500 text-white hover:bg-indigo-600 active:bg-indigo-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-operation>×</button>
+                
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>4</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>5</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>6</button>
+                <button class="bg-indigo-500 text-white hover:bg-indigo-600 active:bg-indigo-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-operation>+</button>
+                
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>7</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>8</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>9</button>
+                <button class="bg-indigo-500 text-white hover:bg-indigo-600 active:bg-indigo-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-operation>-</button>
+
+                <button class="col-span-2 bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>0</button>
+                <button class="bg-gray-200 hover:bg-gray-300 active:bg-gray-400 text-gray-800 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-number>.</button>
+                <button class="bg-green-500 text-white hover:bg-green-600 active:bg-green-700 rounded-lg p-4 shadow-md transition-all duration-150 transform hover:-translate-y-0.5" data-equals>=</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        class Calculator {
+            constructor(pOpT, cOpT) {
+                this.pOpT = pOpT; 
+                this.cOpT = cOpT; 
+                this.clear();
+            }
+
+            clear() {
+                this.curr = ''; 
+                this.prev = ''; 
+                this.op = undefined; 
+            }
+
+            delete() {
+                this.curr = this.curr.toString().slice(0, -1);
+            }
+
+            appendNumber(num) {
+                if (num === '.' && this.curr.includes('.')) return;
+                this.curr = this.curr.toString() + num.toString();
+            }
+
+            chooseOperation(op) {
+                if (this.curr === '') return;
+                if (this.prev !== '') {
+                    this.compute();
+                }
+                this.op = op;
+                this.prev = this.curr;
+                this.curr = '';
+            }
+
+            compute() {
+                let comp; 
+                const prevNum = parseFloat(this.prev); 
+                const currNum = parseFloat(this.curr); 
+                if (isNaN(prevNum) || isNaN(currNum)) return;
+                
+                switch (this.op) {
+                    case '+':
+                        comp = prevNum + currNum;
+                        break;
+                    case '-':
+                        comp = prevNum - currNum;
+                        break;
+                    case '×': 
+                        comp = prevNum * currNum;
+                        break;
+                    case '÷':
+                        comp = prevNum / currNum;
+                        break;
+                    default:
+                        return;
+                }
+                this.curr = comp;
+                this.op = undefined;
+                this.prev = '';
+            }
+
+            getDisplayNumber(num) {
+                const strNum = num.toString(); 
+                const intDig = parseFloat(strNum.split('.')[0]); 
+                const decDig = strNum.split('.')[1]; 
+                let intDsp; 
+                if (isNaN(intDig)) {
+                    intDsp = '';
+                } else {
+                    intDsp = intDig.toLocaleString('en', { maximumFractionDigits: 0 });
+                }
+                if (decDig != null) {
+                    return `${intDsp}.${decDig}`;
+                } else {
+                    return intDsp;
+                }
+            }
+
+            updateDisplay() {
+                this.cOpT.innerText = this.getDisplayNumber(this.curr);
+                if (this.op != null) {
+                    this.pOpT.innerText = `${this.getDisplayNumber(this.prev)} ${this.op}`;
+                } else {
+                    this.pOpT.innerText = '';
+                }
+            }
+        }
+
+        const numBtns = document.querySelectorAll('[data-number]'); 
+        const opBtns = document.querySelectorAll('[data-operation]'); 
+        const eqBtn = document.querySelector('[data-equals]'); 
+        const delBtn = document.querySelector('[data-delete]'); 
+        const acBtn = document.querySelector('[data-all-clear]'); 
+        const pOpT = document.getElementById('previous-operand'); 
+        const cOpT = document.getElementById('current-operand'); 
+
+        const calc = new Calculator(pOpT, cOpT); 
+
+        numBtns.forEach(btn => { 
+            btn.addEventListener('click', () => {
+                calc.appendNumber(btn.innerText);
+                calc.updateDisplay();
+            });
+        });
+
+        opBtns.forEach(btn => { 
+            btn.addEventListener('click', () => {
+                calc.chooseOperation(btn.innerText);
+                calc.updateDisplay();
+            });
+        });
+
+        eqBtn.addEventListener('click', btn => { 
+            calc.compute();
+            calc.updateDisplay();
+        });
+
+        acBtn.addEventListener('click', btn => { 
+            calc.clear();
+            calc.updateDisplay();
+        });
+
+        delBtn.addEventListener('click', btn => { 
+            calc.delete();
+            calc.updateDisplay();
+        });
+    </script>
 </body>
 </html>
