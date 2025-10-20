@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18 # This ensures a runtime exists for the build environment
+  pre_build:
+    commands:
+      - echo Starting build process...
+  build:
+    commands:
+      - echo Code packaging complete.
+artifacts:
+  files:
+    - '**/*' # This packages ALL files for EB deployment
